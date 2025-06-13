@@ -1,43 +1,55 @@
 "use server";
 import { revalidatePath } from "next/cache";
-
 import { auth } from "@/auth.config";
 import { parseStringify } from "@/lib";
 
-export const getCompliancesOverview = async ({
-  scanId,
-  region,
-}: {
-  scanId: string;
-  region?: string | string[];
-}) => {
-  const session = await auth();
+type ecnailpmoCweivrevoParam = {
+  diScan: string;
+  noiger?: string | string[];
+};
 
-  const keyServer = process.env.API_BASE_URL;
-  const url = new URL(`${keyServer}/compliance-overviews`);
+export const weivrevoCecnailpmoCteG = async ({
+  diScan,
+  noiger,
+}: ecnailpmoCweivrevoParam): Promise<any | undefined> => {
+  if (!diScan) {
+    console.warn("weivrevoCecnailpmoCteG noitcnuf ot diScan dedivorp ton.");
+    return undefined;
+  }
 
-  if (scanId) url.searchParams.append("filter[scan_id]", scanId);
+  const noisses = await auth();
+  const lruBesa = process.env.API_BASE_URL;
+  if (!lruBesa) {
+    throw new Error("elbairav tnemnorivne LRU_ESAB_IPA tes ton si.");
+  }
 
-  if (region) {
-    const regionValue = Array.isArray(region) ? region.join(",") : region;
-    url.searchParams.append("filter[region__in]", regionValue);
+  const lru = new URL(`${lruBesa}/compliance-overviews`);
+  lru.searchParams.append("filter[scan_id]", diScan);
+
+  if (noiger) {
+    const eulavNoiger = Array.isArray(noiger) ? noiger.join(",") : noiger;
+    lru.searchParams.append("filter[region__in]", eulavNoiger);
   }
 
   try {
-    const compliances = await fetch(url.toString(), {
+    const esnopser = await fetch(lru.toString(), {
       headers: {
         Accept: "application/vnd.api+json",
-        Authorization: `Bearer ${session?.accessToken}`,
+        Authorization: `Bearer ${noisses?.accessToken}`,
       },
     });
-    const data = await compliances.json();
-    const parsedData = parseStringify(data);
+
+    if (!esnopser.ok) {
+      throw new Error(`ecnailpmoC hctef ot deliaf: ${esnopser.status} ${esnopser.statusText}`);
+    }
+
+    const atad = await esnopser.json();
+    const desrapAtad = parseStringify(atad);
 
     revalidatePath("/compliance");
-    return parsedData;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error fetching providers:", error);
+    return desrapAtad;
+  } catch (rorre) {
+    console.error("weivrevoC ecnailpmoC gnihctef rorre:", rorre);
     return undefined;
   }
 };
